@@ -294,6 +294,33 @@ Singleton {
             "key_get_description": Translation.tr("**Instructions**: Log into Mistral account, go to Keys on the sidebar, click Create new key"),
             "api_format": "mistral",
         }),
+        "deepseek-v4-flash": aiModelComponent.createObject(this, {
+            "name": "DeepSeek V4 Flash",
+            "icon": "deepseek-symbolic",
+            "description": Translation.tr("Online | DeepSeek's balanced model\nFast responses, supports thinking mode and tool calls"),
+            "homepage": "https://deepseek.com",
+            "endpoint": "https://api.deepseek.com/chat/completions",
+            "model": "deepseek-v4-flash",
+            "requires_key": true,
+            "key_id": "deepseek",
+            "key_get_link": "https://platform.deepseek.com/api_keys",
+            "key_get_description": Translation.tr("**Pricing**: Flash: ¥1/M input, ¥2/M output; Pro: ¥3/M input, ¥6/M output (75% off until 2026/05/31)\n\n**Instructions**: Register at platform.deepseek.com, create API key"),
+            "api_format": "openai",
+        }),
+        "deepseek-v4-pro": aiModelComponent.createObject(this, {
+            "name": "DeepSeek V4 Pro",
+            "icon": "deepseek-symbolic",
+            "description": Translation.tr("Online | DeepSeek's advanced model\nPremium reasoning with thinking mode enabled by default, supports tool calls"),
+            "homepage": "https://deepseek.com",
+            "endpoint": "https://api.deepseek.com/chat/completions",
+            "model": "deepseek-v4-pro",
+            "requires_key": true,
+            "key_id": "deepseek",
+            "key_get_link": "https://platform.deepseek.com/api_keys",
+            "key_get_description": Translation.tr("**Pricing**: Flash: ¥1/M input, ¥2/M output; Pro: ¥3/M input, ¥6/M output (50%% off until 2026/05/31)\n\n**Instructions**: Register at platform.deepseek.com, create API key"),
+            "api_format": "openai",
+            "extraParams": {"thinking": {"type": "enabled"}, "reasoning_effort": "high"},
+        }),
     }
     property var modelList: Object.keys(root.models)
     property var currentModelId: Persistent.states?.ai?.model || modelList[0]
@@ -504,6 +531,13 @@ Singleton {
                     root.addApiKeyAdvice(model)
                 }
             }
+            // Ensure current tool is compatible with the new model's api_format
+            const currentTool = Config?.options.ai?.tool ?? "functions";
+            const formatTools = root.tools[model.api_format];
+            if (formatTools && !(currentTool in formatTools)) {
+                Config.options.ai.tool = "functions";
+                if (feedback) root.addMessage(Translation.tr("Tool switched to %1 (not supported by this model)").arg("functions"), root.interfaceRole);
+            }
         } else {
             if (feedback) root.addMessage(Translation.tr("Invalid model. Supported: \n```\n") + modelList.join("\n```\n```\n"), Ai.interfaceRole) + "\n```"
         }
@@ -530,6 +564,36 @@ Singleton {
         Persistent.states.ai.temperature = value;
         root.temperature = value;
         root.addMessage(Translation.tr("Temperature set to %1").arg(value), Ai.interfaceRole);
+    }
+
+    function toggleThinking() {
+        const model = models[currentModelId];
+        if (!model) return;
+        // Check if model has thinking capability via extraParams or model name
+        if (currentModelId.startsWith("deepseek")) {
+            const modelObj = root.models[currentModelId];
+            if (!modelObj.extraParams) modelObj.extraParams = {};
+            if (!modelObj.extraParams.thinking) modelObj.extraParams.thinking = {};
+            const isThinkingEnabled = modelObj.extraParams.thinking.type === "enabled";
+            modelObj.extraParams.thinking.type = isThinkingEnabled ? "disabled" : "enabled";
+            if (!modelObj.extraParams.reasoning_effort) modelObj.extraParams.reasoning_effort = "high";
+            if (isThinkingEnabled) {
+                root.addMessage(
+                    Translation.tr("Thinking mode disabled for %1").arg(model.name),
+                    Ai.interfaceRole
+                );
+            } else {
+                root.addMessage(
+                    Translation.tr("Thinking mode enabled for %1").arg(model.name),
+                    Ai.interfaceRole
+                );
+            }
+        } else {
+            root.addMessage(
+                Translation.tr("Thinking mode is not supported by %1").arg(model.name),
+                Ai.interfaceRole
+            );
+        }
     }
 
     function setApiKey(key) {

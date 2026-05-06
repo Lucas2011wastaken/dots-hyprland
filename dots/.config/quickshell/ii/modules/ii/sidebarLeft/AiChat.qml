@@ -140,6 +140,13 @@ Item {
             }
         },
         {
+            name: "think",
+            description: Translation.tr("Toggle thinking mode on/off (DeepSeek models)"),
+            execute: () => {
+                Ai.toggleThinking();
+            }
+        },
+        {
             name: "test",
             description: Translation.tr("Markdown test"),
             execute: () => {

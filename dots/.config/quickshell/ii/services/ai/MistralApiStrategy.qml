@@ -19,6 +19,10 @@ ApiStrategy {
                         "role": message.role,
                         "content": message.rawContent,
                     }
+                    // DeepSeek requires reasoning_content to be passed back in multi-turn conversations
+                    if (message.role === "assistant" && message.reasoningContent?.length > 0) {
+                        messageData.reasoning_content = message.reasoningContent;
+                    }
                     if (hasFunctionCall) {
                         if (message.functionResponse?.length > 0) {
                             messageData.name = message.functionName; // Does the func call also need this name? or just the func output?
@@ -103,6 +107,8 @@ ApiStrategy {
                     message.content += startBlock;
                 }
                 newContent = responseReasoning;
+                // Save raw reasoning_content for multi-turn compatibility (DeepSeek)
+                message.reasoningContent = (message.reasoningContent || "") + responseReasoning;
             }
 
             // Text

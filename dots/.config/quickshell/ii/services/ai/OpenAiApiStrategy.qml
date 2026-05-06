@@ -14,10 +14,15 @@ ApiStrategy {
             "messages": [
                 {role: "system", content: systemPrompt},
                 ...messages.map(message => {
-                    return {
+                    let msg = {
                         "role": message.role,
                         "content": message.rawContent,
                     }
+                    // DeepSeek requires reasoning_content to be passed back in multi-turn conversations
+                    if (message.role === "assistant" && message.reasoningContent?.length > 0) {
+                        msg.reasoning_content = message.reasoningContent;
+                    }
+                    return msg;
                 }),
             ],
             "stream": true,
@@ -60,8 +65,9 @@ ApiStrategy {
 
             let newContent = "";
 
-            const responseContent = dataJson.choices[0]?.delta?.content || dataJson.message?.content;
-            const responseReasoning = dataJson.choices[0]?.delta?.reasoning || dataJson.choices[0]?.delta?.reasoning_content;
+            const responseContent = dataJson.choices[0]?.delta?.content || dataJson.choices[0]?.message?.content;
+            const responseReasoning = dataJson.choices[0]?.delta?.reasoning || dataJson.choices[0]?.delta?.reasoning_content
+                || dataJson.choices[0]?.message?.reasoning || dataJson.choices[0]?.message?.reasoning_content;
 
             if (responseContent && responseContent.length > 0) {
                 if (isReasoning) {
@@ -79,6 +85,8 @@ ApiStrategy {
                     message.content += startBlock;
                 }
                 newContent = responseReasoning;
+                // Save raw reasoning_content for multi-turn compatibility (DeepSeek)
+                message.reasoningContent = (message.reasoningContent || "") + responseReasoning;
             }
 
             message.content += newContent;

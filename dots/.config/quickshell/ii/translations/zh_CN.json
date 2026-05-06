@@ -291,6 +291,9 @@
   "Set the tool to use for the model.": "设置模型使用的工具。",
   "Night Light | Right-click to toggle Auto mode": "夜间模式 | 右键切换自动模式",
   "Online | %1's model | Delivers fast, responsive and well-formatted answers. Disadvantages: not very eager to do stuff; might make up unknown function calls": "在线 | %1 的模型 | 提供快速、响应迅速且格式良好的答案。缺点：不太积极主动；可能编造未知的函数调用",
+  "Online | DeepSeek's balanced model\nFast responses, supports thinking mode and tool calls": "在线 | DeepSeek 的均衡模型\n快速响应，支持思考模式和工具调用",
+  "Online | DeepSeek's advanced model\nPremium reasoning with thinking mode enabled by default, supports tool calls": "在线 | DeepSeek 的高级模型\n默认开启思考模式的优质推理，支持工具调用",
+  "**Pricing**: Flash: ¥1/M input, ¥2/M output; Pro: ¥3/M input, ¥6/M output (50%% off until 2026/05/31)\n\n**Instructions**: Register at platform.deepseek.com, create API key": "**价格**：Flash: ¥1/百万输入, ¥2/百万输出; Pro: ¥3/百万输入, ¥6/百万输出（截至 2026/05/31 五折优惠）\n\n**说明**：在 platform.deepseek.com 注册并创建 API 密钥",
   "Depends on workspace": "随工作区移动",
   "Usage: %1tool TOOL_NAME": "用法：%1tool 工具名称",
   "Tray": "托盘",
@@ -720,5 +723,9 @@
   "Move left": "左移",
   "Pin to Start": "固定到“开始”屏幕",
   "Pin": "固定",
-  "Unpin": "取消固定"
+  "Unpin": "取消固定",
+  "Thinking mode enabled for %1": "已为 %1 开启思考模式",
+  "Thinking mode disabled for %1": "已为 %1 关闭思考模式",
+  "Thinking mode is not supported by %1": "%1 不支持思考模式",
+  "Tool switched to %1 (not supported by this model)": "工具已切换为 %1（此模型不支持之前的工具）"
 }
