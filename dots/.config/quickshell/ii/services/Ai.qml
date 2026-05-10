@@ -51,6 +51,7 @@ Singleton {
     }
     property var postResponseHook
     property real temperature: Persistent.states?.ai?.temperature ?? 0.5
+    property string thinkingModeDisplay: "off"
     property QtObject tokenCount: QtObject {
         property int input: -1
         property int output: -1
@@ -544,6 +545,7 @@ Singleton {
                 Config.options.ai.tool = "functions";
                 if (feedback) root.addMessage(Translation.tr("Tool switched to %1 (not supported by this model)").arg("functions"), root.interfaceRole);
             }
+            root.updateThinkingModeDisplay();
         } else {
             if (feedback) root.addMessage(Translation.tr("Invalid model. Supported: \n```\n") + modelList.join("\n```\n```\n"), Ai.interfaceRole) + "\n```"
         }
@@ -586,6 +588,24 @@ Singleton {
         return "standard";
     }
 
+    function updateThinkingModeDisplay() {
+        if (!root.isDeepSeekModel()) {
+            root.thinkingModeDisplay = "unsupported";
+            return;
+        }
+        const modelObj = root.models[currentModelId];
+        if (!modelObj || !modelObj.extraParams) {
+            root.thinkingModeDisplay = "off";
+            return;
+        }
+        const thinking = modelObj.extraParams.thinking;
+        if (!thinking || thinking.type !== "enabled") {
+            root.thinkingModeDisplay = "off";
+            return;
+        }
+        root.thinkingModeDisplay = modelObj.extraParams.reasoning_effort === "max" ? "max" : "standard";
+    }
+
     function setThinkingMode(mode) {
         const model = models[currentModelId];
         if (!model) return false;
@@ -606,6 +626,7 @@ Singleton {
         } else {
             return false;
         }
+        root.updateThinkingModeDisplay();
         return true;
     }
 

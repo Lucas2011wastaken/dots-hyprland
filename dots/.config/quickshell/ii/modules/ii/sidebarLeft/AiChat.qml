@@ -376,9 +376,10 @@ Inline w/ backslash and round brackets \\(e^{i\\pi} + 1 = 0\\)
                     }
                     StatusSeparator {}
                     StatusItem {
-                        icon: Ai.isDeepSeekModel() ? "psychology" : "device_thermostat"
-                        statusText: Ai.isDeepSeekModel() ? (Ai.getThinkingMode() === "unsupported" ? "—" : Ai.getThinkingMode()) : Ai.temperature.toFixed(1)
-                        description: Ai.isDeepSeekModel()
+                        readonly property bool isDeepseek: Ai.currentModelId.startsWith("deepseek")
+                        icon: isDeepseek ? "psychology" : "device_thermostat"
+                        statusText: isDeepseek ? (Ai.thinkingModeDisplay === "unsupported" ? "—" : Ai.thinkingModeDisplay) : Ai.temperature.toFixed(1)
+                        description: isDeepseek
                             ? Translation.tr("Thinking mode\nChange with /think [off|standard|max]")
                             : Translation.tr("Temperature\nChange with /temp VALUE")
                     }
