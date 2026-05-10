@@ -572,34 +572,41 @@ Singleton {
         root.addMessage(Translation.tr("Temperature set to %1").arg(value), Ai.interfaceRole);
     }
 
-    function toggleThinking() {
+    function isDeepSeekModel() {
+        return currentModelId.startsWith("deepseek");
+    }
+
+    function getThinkingMode() {
+        if (!root.isDeepSeekModel()) return "unsupported";
+        const modelObj = root.models[currentModelId];
+        if (!modelObj || !modelObj.extraParams) return "off";
+        const thinking = modelObj.extraParams.thinking;
+        if (!thinking || thinking.type !== "enabled") return "off";
+        if (modelObj.extraParams.reasoning_effort === "max") return "max";
+        return "standard";
+    }
+
+    function setThinkingMode(mode) {
         const model = models[currentModelId];
-        if (!model) return;
-        // Check if model has thinking capability via extraParams or model name
-        if (currentModelId.startsWith("deepseek")) {
-            const modelObj = root.models[currentModelId];
-            if (!modelObj.extraParams) modelObj.extraParams = {};
-            if (!modelObj.extraParams.thinking) modelObj.extraParams.thinking = {};
-            const isThinkingEnabled = modelObj.extraParams.thinking.type === "enabled";
-            modelObj.extraParams.thinking.type = isThinkingEnabled ? "disabled" : "enabled";
-            if (!modelObj.extraParams.reasoning_effort) modelObj.extraParams.reasoning_effort = "high";
-            if (isThinkingEnabled) {
-                root.addMessage(
-                    Translation.tr("Thinking mode disabled for %1").arg(model.name),
-                    Ai.interfaceRole
-                );
-            } else {
-                root.addMessage(
-                    Translation.tr("Thinking mode enabled for %1").arg(model.name),
-                    Ai.interfaceRole
-                );
-            }
+        if (!model) return false;
+        if (!root.isDeepSeekModel()) return false;
+
+        const modelObj = root.models[currentModelId];
+        if (!modelObj.extraParams) modelObj.extraParams = {};
+
+        if (mode === "off") {
+            modelObj.extraParams.thinking = {"type": "disabled"};
+            delete modelObj.extraParams.reasoning_effort;
+        } else if (mode === "standard") {
+            modelObj.extraParams.thinking = {"type": "enabled"};
+            modelObj.extraParams.reasoning_effort = "high";
+        } else if (mode === "max") {
+            modelObj.extraParams.thinking = {"type": "enabled"};
+            modelObj.extraParams.reasoning_effort = "max";
         } else {
-            root.addMessage(
-                Translation.tr("Thinking mode is not supported by %1").arg(model.name),
-                Ai.interfaceRole
-            );
+            return false;
         }
+        return true;
     }
 
     function setApiKey(key) {

@@ -141,9 +141,48 @@ Item {
         },
         {
             name: "think",
-            description: Translation.tr("Toggle thinking mode on/off (DeepSeek models)"),
-            execute: () => {
-                Ai.toggleThinking();
+            description: Translation.tr("Set thinking mode: off / standard / max (DeepSeek models)"),
+            execute: (args) => {
+                const currentMode = Ai.getThinkingMode();
+                if (args.length === 0) {
+                    if (currentMode === "unsupported") {
+                        Ai.addMessage(
+                            Translation.tr("Thinking mode is not supported by the current model"),
+                            Ai.interfaceRole
+                        );
+                    } else {
+                        Ai.addMessage(
+                            Translation.tr("Current thinking mode: %1\n\nUsage: /think [off | standard | max]").arg(currentMode),
+                            Ai.interfaceRole
+                        );
+                    }
+                    return;
+                }
+                const mode = args[0].toLowerCase();
+                if (["off", "standard", "max"].includes(mode)) {
+                    const success = Ai.setThinkingMode(mode);
+                    if (success) {
+                        const modeNames = {
+                            "off": Translation.tr("off"),
+                            "standard": Translation.tr("standard"),
+                            "max": Translation.tr("max")
+                        };
+                        Ai.addMessage(
+                            Translation.tr("Thinking mode set to %1").arg(modeNames[mode]),
+                            Ai.interfaceRole
+                        );
+                    } else {
+                        Ai.addMessage(
+                            Translation.tr("Thinking mode is not supported by the current model"),
+                            Ai.interfaceRole
+                        );
+                    }
+                } else {
+                    Ai.addMessage(
+                        Translation.tr("Invalid mode. Usage: /think [off | standard | max]"),
+                        Ai.interfaceRole
+                    );
+                }
             }
         },
         {
@@ -337,9 +376,14 @@ Inline w/ backslash and round brackets \\(e^{i\\pi} + 1 = 0\\)
                     }
                     StatusSeparator {}
                     StatusItem {
-                        icon: "device_thermostat"
-                        statusText: Ai.temperature.toFixed(1)
-                        description: Translation.tr("Temperature\nChange with /temp VALUE")
+                        icon: Ai.isDeepSeekModel() ? "psychology" : "device_thermostat"
+                        statusText: Ai.isDeepSeekModel() ? {
+                            const mode = Ai.getThinkingMode();
+                            return mode === "unsupported" ? "—" : mode;
+                        } : Ai.temperature.toFixed(1)
+                        description: Ai.isDeepSeekModel()
+                            ? Translation.tr("Thinking mode\nChange with /think [off|standard|max]")
+                            : Translation.tr("Temperature\nChange with /temp VALUE")
                     }
                     StatusSeparator {
                         visible: Ai.tokenCount.total > 0
