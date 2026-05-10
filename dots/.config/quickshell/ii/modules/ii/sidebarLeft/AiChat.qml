@@ -377,10 +377,7 @@ Inline w/ backslash and round brackets \\(e^{i\\pi} + 1 = 0\\)
                     StatusSeparator {}
                     StatusItem {
                         icon: Ai.isDeepSeekModel() ? "psychology" : "device_thermostat"
-                        statusText: Ai.isDeepSeekModel() ? {
-                            const mode = Ai.getThinkingMode();
-                            return mode === "unsupported" ? "—" : mode;
-                        } : Ai.temperature.toFixed(1)
+                        statusText: Ai.isDeepSeekModel() ? (Ai.getThinkingMode() === "unsupported" ? "—" : Ai.getThinkingMode()) : Ai.temperature.toFixed(1)
                         description: Ai.isDeepSeekModel()
                             ? Translation.tr("Thinking mode\nChange with /think [off|standard|max]")
                             : Translation.tr("Temperature\nChange with /temp VALUE")
