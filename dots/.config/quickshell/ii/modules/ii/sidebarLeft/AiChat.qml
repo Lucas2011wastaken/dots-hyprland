@@ -669,6 +669,29 @@ Inline w/ backslash and round brackets \\(e^{i\\pi} + 1 = 0\\)
                                         description: Ai.toolDescriptions[toolName]
                                     };
                                 });
+                            } else if (messageInputField.text.startsWith(`${root.commandPrefix}think`)) {
+                                const thinkModes = [
+                                    { name: "off", description: Translation.tr("Disable thinking mode") },
+                                    { name: "standard", description: Translation.tr("Standard thinking effort (high)") },
+                                    { name: "max", description: Translation.tr("Maximum thinking effort") },
+                                ];
+                                root.suggestionQuery = messageInputField.text.split(" ").slice(1).join(" ");
+                                const modeResults = Fuzzy.go(root.suggestionQuery, thinkModes.map(m => {
+                                    return {
+                                        name: Fuzzy.prepare(m.name),
+                                        obj: m
+                                    };
+                                }), {
+                                    all: true,
+                                    key: "name"
+                                });
+                                root.suggestionList = modeResults.map(m => {
+                                    return {
+                                        name: `${messageInputField.text.trim().split(" ").length == 1 ? (root.commandPrefix + "think ") : ""}${m.target}`,
+                                        displayName: m.target,
+                                        description: m.obj.description
+                                    };
+                                });
                             } else if (messageInputField.text.startsWith(root.commandPrefix)) {
                                 root.suggestionQuery = messageInputField.text;
                                 root.suggestionList = root.allCommands.filter(cmd => cmd.name.startsWith(messageInputField.text.substring(1))).map(cmd => {
