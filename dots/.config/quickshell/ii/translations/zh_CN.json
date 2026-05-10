@@ -727,5 +727,19 @@
   "Thinking mode enabled for %1": "已为 %1 开启思考模式",
   "Thinking mode disabled for %1": "已为 %1 关闭思考模式",
   "Thinking mode is not supported by %1": "%1 不支持思考模式",
-  "Tool switched to %1 (not supported by this model)": "工具已切换为 %1（此模型不支持之前的工具）"
+  "Tool switched to %1 (not supported by this model)": "工具已切换为 %1（此模型不支持之前的工具）",
+  "Set thinking mode: off / standard / max (DeepSeek models)": "设置思考模式：off / standard / max（DeepSeek 模型）",
+  "Thinking mode is not supported by the current model": "当前模型不支持思考模式",
+  "Current thinking mode: %1\n\nUsage: /think [off | standard | max]": "当前思考模式：%1\n\n用法：/think [off | standard | max]",
+  "Thinking mode set to %1": "思考模式已设置为 %1",
+  "off": "off",
+  "standard": "standard",
+  "max": "max",
+  "Invalid mode. Usage: /think [off | standard | max]": "无效模式。用法：/think [off | standard | max]",
+  "Thinking mode\nChange with /think [off|standard|max]": "思考模式\n使用 /think [off|standard|max] 更改",
+  "Disable thinking mode": "禁用思考模式",
+  "Standard thinking effort (high)": "标准思考力度（高）",
+  "Maximum thinking effort": "最大思考力度",
+  "**Pricing**: Flash: ¥1/M input, ¥2/M output; Pro: ¥3/M input, ¥6/M output (75% off until 2026/05/31)\n\n**Instructions**: Register at platform.deepseek.com, create API key": "**价格**：Flash: ¥1/百万输入, ¥2/百万输出; Pro: ¥3/百万输入, ¥6/百万输出（截至 2026/05/31 75% 折扣）\n\n**说明**：在 platform.deepseek.com 注册并创建 API 密钥",
+  "Config field `%1` has been set to `%2`": "配置字段 `%1` 已设置为 `%2`"
 }
