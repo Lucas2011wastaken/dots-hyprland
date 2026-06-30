@@ -90,5 +90,38 @@ StyledPopup {
                 }
             }
         }
+
+        Column {
+            anchors.top: parent.top
+            spacing: 8
+
+            StyledPopupHeaderRow {
+                icon: "stadia_controller"
+                label: "GPU"
+            }
+            Column {
+                spacing: 4
+                StyledPopupValueRow {
+                    icon: "manufacturing"
+                    label: Translation.tr("Name:")
+                    value: ResourceUsage.gpuName || "--"
+                }
+                StyledPopupValueRow {
+                    icon: "bolt"
+                    label: Translation.tr("Load:")
+                    value: `${Math.round(ResourceUsage.gpuUsage * 100)}%`
+                }
+                StyledPopupValueRow {
+                    icon: "clock_loader_60"
+                    label: Translation.tr("VRAM Used:")
+                    value: ResourceUsage.mibToGbString(ResourceUsage.gpuMemoryUsed)
+                }
+                StyledPopupValueRow {
+                    icon: "empty_dashboard"
+                    label: Translation.tr("VRAM Total:")
+                    value: ResourceUsage.mibToGbString(ResourceUsage.gpuMemoryTotal)
+                }
+            }
+        }
     }
 }
